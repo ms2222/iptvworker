@@ -1,0 +1,12 @@
+name = "iptvworker"
+main = "src/js/worker.js"
+compatibility_date = "2023-10-30"
+
+# 请替换 ID 为你的真实 KV Namespace ID
+[[kv_namespaces]]
+binding = "IPTV_KV"
+id = "79247acf3da04ac88914fce114b551e2"
+
+[vars]
+# 请修改为你的管理密码
+PASSWORD = "Qwe123123!"
