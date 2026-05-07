@@ -1,0 +1,22 @@
+name: Deploy Worker
+
+on:
+  push:
+    branches:
+      - main  # 监听 main 分支的代码推送
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          # 自动注入密码变量
+          vars: |
+            PASSWORD
