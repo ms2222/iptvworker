@@ -17,6 +17,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          # 自动注入密码变量
           vars: |
-            PASSWORD
+            PASSWORD=${{ secrets.PASSWORD }}
