@@ -17,7 +17,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          # 用单引号包裹变量，强制声明这是字符串
           vars: |
-            PASSWORD
-        env:
-          PASSWORD: ${{ secrets.PASSWORD }}
+            PASSWORD='${{ secrets.PASSWORD }}'
