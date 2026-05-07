@@ -17,5 +17,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          # 这样写能确保 GitHub 强制把 Secret 塞进环境变量
           vars: |
-            PASSWORD=${{ secrets.PASSWORD }}
+            PASSWORD="${{ secrets.PASSWORD }}"
