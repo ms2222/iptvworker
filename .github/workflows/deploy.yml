@@ -1,61 +1,26 @@
-name: Deploy IPTV Worker to Cloudflare
+name: Deploy to Cloudflare Workers
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
         with:
-          node-version: '24'
-
-      - name: Install Wrangler
-        run: npm install -g wrangler
-
-      - name: Create KV Namespace if not exists
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          secrets: |
+            PASSWORD
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-        run: |
-          # Check if KV namespace exists
-          KV_LIST=$(wrangler kv namespace list 2>/dev/null || echo "[]")
-          EXISTING_KV=$(echo "$KV_LIST" | grep -o '"title":"IPTV_KV"' || true)
-
-          if [ -z "$EXISTING_KV" ]; then
-            echo "Creating KV namespace: IPTV_KV"
-            wrangler kv namespace create IPTV_KV
-          else
-            echo "KV namespace IPTV_KV already exists"
-          fi
-
-      - name: Deploy to Cloudflare Workers
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           PASSWORD: ${{ secrets.PASSWORD }}
-        run: |
-          # Deploy worker with environment variable
-          wrangler deploy --env production \
-            --var PASSWORD:"$PASSWORD"
-
-      - name: Deployment Summary
-        run: |
-          echo "✅ IPTV Worker deployed successfully!"
-          echo ""
-          echo "📋 后续步骤："
-          echo "1. 登录 Cloudflare Dashboard"
-          echo "2. 进入 Workers & Pages → 你的 Worker"
-          echo "3. 确认 KV Namespace 'IPTV_KV' 已绑定"
-          echo "4. 访问你的 Worker URL 开始使用"
