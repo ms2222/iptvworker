@@ -12,11 +12,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          # 这种写法是目前 Wrangler v3 最稳妥的
-          vars: |
-            PASSWORD="${{ secrets.PASSWORD }}"
+          # 【最关键修改】不在这里写任何 vars
+        env:
+          # 直接把 Secret 映射给环境，绕过 wrangler 的 vars 解析
+          PASSWORD: ${{ secrets.PASSWORD }}
